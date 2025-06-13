@@ -1,19 +1,14 @@
 #!/bin/bash
 
-# Add Jenkins repository
-sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+# Download Jenkins GPG key and save it to keyrings
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
 
-# Import Jenkins GPG key
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+# Add the Jenkins apt repository to sources list
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | \
+sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
 
-# Upgrade all packages
-sudo dnf upgrade -y
-
-# Install required dependencies
-sudo dnf install -y fontconfig java-21-openjdk
+# Update package index
+sudo apt-get update
 
 # Install Jenkins
-sudo dnf install -y jenkins
-
-# Reload systemd to recognize Jenkins service
-sudo systemctl daemon-reload
+sudo apt-get install -y jenkins
